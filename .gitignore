@@ -1,1 +1,25 @@
+# Build output
+bin/
+obj/
+**/bin/
+**/obj/
+*.DotSettings.user
 .idea/
+.vs/
+
+# Rider / ReSharper
+*.DotSettings.user
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
