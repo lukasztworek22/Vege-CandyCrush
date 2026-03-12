@@ -37,7 +37,7 @@ public class BoardFiller
         board.Content[0, 0] = "%";
     }
 
-    public void FillNulls()
+    public void FillBoardAfterExplosion()
     {
         for (int row = 1; row < board.Content.GetLength(0); row++)
         {
@@ -45,7 +45,6 @@ public class BoardFiller
             {
                 if (board.Content[row, col] == null)
                 {
-
                     board.Content[row, col] = vegies[rnd.Next(vegies.Length)];
                 }
             }

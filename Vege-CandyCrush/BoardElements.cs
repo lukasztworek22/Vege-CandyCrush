@@ -45,6 +45,16 @@ public class BoardElement
         Type = type;
     }
 
+    public FillDirection Direction1()
+    {
+        return Type switch
+        {
+            ElementType.Potato => FillDirection.Top,
+            ElementType.Onion => FillDirection.Bottom,
+            ElementType.Lettuce => FillDirection.Left,
+            ElementType.Thyme => FillDirection.Right
+        };
+    }
     public FillDirection Direction
     {
         get

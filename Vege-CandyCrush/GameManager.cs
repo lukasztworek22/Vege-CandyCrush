@@ -10,10 +10,11 @@ public class GameManager
         this.board = board;
         this.filler = filler;
     }
-    
-    public List<(int row, int col)> FindMatchesThree()
+
+    public List<ExplosionCandidate> FindExplosions()
     {
-        List<(int, int)> matches = new List<(int, int)>();
+        List<ExplosionCandidate> explosionCandidates = new List<ExplosionCandidate>();
+        
         int rows = board.Content.GetLength(0);
         int cols = board.Content.GetLength(1);
 
@@ -21,12 +22,15 @@ public class GameManager
         {
             for (int j = 1; j < cols - 2; j++)
             {
-                if (board.Content[i, j] == board.Content[i, j + 1] && board.Content[i, j] == board.Content[i, j + 2])
+                ExplosionType atLeastThree = matchesAtLeastThree(i, j);
+                if (atLeastThree != ExplosionType.NONE)
                 {
+                    List<(int, int)> matches = new List<(int, int)>();
                     matches.Add((i, j));
                     matches.Add((i, j + 1));
                     matches.Add((i, j + 2));
-                    
+                    var explosionCandidate = new ExplosionCandidate(CheckElementType(board.Content[i, j]), atLeastThree, matches);
+                    explosionCandidates.Add(explosionCandidate);
                 }
             }
         }
@@ -45,14 +49,30 @@ public class GameManager
             }
         }
 
-        return matches.Distinct().ToList();
+        return explosionCandidates;
     }
 
-    public void MatchesExplosion(List<(int row , int col )> matches)
+    private ElementType CheckElementType(string s)
     {
-        foreach (var (row, col) in matches)
+        return s.Equals()
+    }
+    //TODO: Think how to check if matches more then three. Maybe check if 4,5 is also the case and return
+
+    private ExplosionType matchesAtLeastThree(int i, int j)
+    {
+        return board.Content[i, j] == board.Content[i, j + 1] && board.Content[i, j] == board.Content[i, j + 2] 
+            ? ExplosionType.THREE 
+            : ExplosionType.NONE;
+    }
+
+    public void Explode(List<ExplosionCandidate> candidates)
+    {
+        foreach (var candidate in candidates)
         {
-            board.Content[row, col] = null;
+            foreach (var coord in candidate.ExplosionCoordinates)
+            {
+                board.Content[coord.Item1, coord.Item2] = null;
+            }
         }
     }
 
@@ -201,4 +221,23 @@ public class GameManager
         }
     }
     
+}
+
+public class ExplosionCandidate
+{
+    public ElementType ElementType { get; set; }
+    public ExplosionType Type { get; set; }
+    public List<(int, int)> ExplosionCoordinates { get; set; }
+
+    public ExplosionCandidate(ElementType elementType, ExplosionType type, List<(int, int)> explosionCoordinates)
+    {
+        ElementType = elementType;
+        Type = type;
+        ExplosionCoordinates = explosionCoordinates;
+    }
+}
+
+public enum ExplosionType
+{
+    NONE, THREE, FOUR, FIVE
 }
