@@ -29,17 +29,15 @@ class Program
             {
                 manager.MatchesExplosion(matches);
                 
+                manager.ApplyGravity(FillDirection.Top);
                 
-                matches = manager.FindMatchesThree(); 
-                if (matches.Count > 0)
-                {
-                    manager.MatchesExplosion(matches);
-
-                    var firstElement = board.Content[matches[0].row, matches[0].col]; 
-                    firstElement?.Direction ?? FillDirection.Top;
-                    manager.ApplyGravity(direction);
-
-                }
+                filler.FillNulls();
+                
+                Console.Clear();
+                board.PrintBoard();
+                Console.WriteLine("Press any button to continue");
+                Console.ReadKey();
+                continue;
 
             }
             
