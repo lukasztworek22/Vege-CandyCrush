@@ -18,53 +18,125 @@ public class GameManager
         int rows = board.Content.GetLength(0);
         int cols = board.Content.GetLength(1);
 
-        for (int i = 1; i < rows; i++)
+        for (int row = 1; row < rows; row++)
         {
-            for (int j = 1; j < cols - 2; j++)
+            for (int col = 1; col < cols; col++)
             {
-                ExplosionType atLeastThree = matchesAtLeastThree(i, j);
-                if (atLeastThree != ExplosionType.NONE)
+                if (board.Content[row, col] == null)
                 {
-                    List<(int, int)> matches = new List<(int, int)>();
-                    matches.Add((i, j));
-                    matches.Add((i, j + 1));
-                    matches.Add((i, j + 2));
-                    var explosionCandidate = new ExplosionCandidate(CheckElementType(board.Content[i, j]), atLeastThree, matches);
-                    explosionCandidates.Add(explosionCandidate);
+                    continue;
+                }
+
+                if (IsHorizontalStart(row, col))
+                {
+                    List<(int, int)> run = GetHorizontalRun(row, col);
+                    ExplosionType type = GetExplosionType(run.Count);
+
+                    if (type != ExplosionType.NONE)
+                    {
+                        ExplosionCandidate candidate =
+                            new ExplosionCandidate(CheckElementType(board.Content[row, col]), type, run);
+                        explosionCandidates.Add(candidate);
+                    }
+                }
+
+                if (IsVerticalStart(row, col))
+                {
+                    List<(int, int)> run = GetVerticalRun(row, col);
+                    ExplosionType type = GetExplosionType(run.Count);
+
+                    if (type != ExplosionType.NONE)
+                    {
+                        ExplosionCandidate candidate =
+                            new ExplosionCandidate(CheckElementType(board.Content[row, col]), type, run);
+                        explosionCandidates.Add(candidate);
+                    }
                 }
             }
+
+           
         }
 
-        for (int j = 1; j < cols; j++)
-        {
-            for (int i = 1; i < rows - 2; i++)
-            {
-                if (board.Content[i, j] == board.Content[i + 1, j] && board.Content[i, j] == board.Content[i + 2, j])
-                {
-                    matches.Add((i, j));
-                    matches.Add((i + 1, j));
-                    matches.Add((i + 2, j));
-                    
-                }
-            }
-        }
+        
 
         return explosionCandidates;
     }
 
     private ElementType CheckElementType(string s)
     {
-        return s.Equals()
-    }
-    //TODO: Think how to check if matches more then three. Maybe check if 4,5 is also the case and return
+        if (s.Equals("🍠"))
+        {
+            return ElementType.Potato;
+        }
+        if (s.Equals("🥬"))
+        {
+            return ElementType.Lettuce;
+        }
+        if (s.Equals("🧅"))
+        {
+            return ElementType.Onion;
+        }
+        if (s.Equals("🌿"))
+        {
+            return ElementType.Thyme;
+        }
 
-    private ExplosionType matchesAtLeastThree(int i, int j)
+        return ElementType.Lettuce;
+    }
+    
+    
+    private List<(int, int)> GetHorizontalRun(int row, int col)
     {
-        return board.Content[i, j] == board.Content[i, j + 1] && board.Content[i, j] == board.Content[i, j + 2] 
-            ? ExplosionType.THREE 
-            : ExplosionType.NONE;
-    }
+        List <(int, int)> result = new List<(int, int)>();
+        string value = board.Content[row, col];
+        if (value == null) return result;
 
+        int c = col;
+        int cols = board.Content.GetLength(1);
+
+        while (c < cols && board.Content[row, c] == value)
+        {
+            result.Add((row, c));
+            c++;
+        }
+
+        return result;
+    }
+    private List<(int, int)> GetVerticalRun(int row, int col)
+    {
+        List<(int, int)> result = new List<(int, int)>();
+        string value = board.Content[row, col];
+        if (value == null) return result;
+
+        int r = row;
+        int rows = board.Content.GetLength(0);
+
+        while (r < rows && board.Content[r, col] == value)
+        {
+            result.Add((r, col));
+            r++;
+        }
+
+        return result;
+    }
+    
+    private bool IsHorizontalStart(int row, int col)
+    {
+        return col == 1 || board.Content[row, col - 1] != board.Content[row, col];
+    }
+    
+    private bool IsVerticalStart(int row, int col)
+    {
+        return row == 1 || board.Content[row - 1, col] != board.Content[row, col];
+    }
+    
+    private ExplosionType GetExplosionType(int count)
+    {
+        if (count >= 5) return ExplosionType.FIVE;
+        if (count == 4) return ExplosionType.FOUR;
+        if (count == 3) return ExplosionType.THREE;
+        return ExplosionType.NONE;
+    } 
     public void Explode(List<ExplosionCandidate> candidates)
     {
         foreach (var candidate in candidates)
@@ -241,3 +313,6 @@ public enum ExplosionType
 {
     NONE, THREE, FOUR, FIVE
 }
+
+
+    

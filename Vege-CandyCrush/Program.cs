@@ -14,26 +14,41 @@ class Program
 
 
         manager.Prepare();
-
+        
+        List<ExplosionCandidate> explosionCandidates;
         while (true)
         {
             Console.Clear();
             board.PrintBoard();
 
-            List<ExplosionCandidate> explosionCandidates = manager.FindExplosions();
+            explosionCandidates = manager.FindExplosions();
             if (explosionCandidates.Count > 0)
             {
                 manager.Explode(explosionCandidates);
-                board.PrintBoard();
-                
+                manager.ApplyGravity(FillDirection.Top);
                 filler.FillBoardAfterExplosion();
-                
+
+                Console.Clear();
                 board.PrintBoard();
-                // FillDirection fillDirection = firstElement?.Direction ?? FillDirection.Top;
-                // manager.ApplyGravity(direction);
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+                continue;
             }
 
             board.ElementSwap();
+            while (true)
+            {
+                explosionCandidates = manager.FindExplosions();
+                if (explosionCandidates.Count == 0) break;
+                manager.Explode(explosionCandidates);
+                manager.ApplyGravity(FillDirection.Top);
+                filler.FillBoardAfterExplosion();
+
+                Console.Clear();
+                board.PrintBoard();
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
         }
     }
 }
