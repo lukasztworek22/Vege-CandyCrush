@@ -144,7 +144,7 @@ public class GameManager
         {
             foreach (var coord in candidate.ExplosionCoordinates)
             {
-                board.Content[coord.Item1, coord.Item2] = null;
+                board.Content[coord.Item1, coord.Item2] = "🚫";
             }
         }
     }
@@ -187,7 +187,7 @@ public class GameManager
             int writeRow = rows - 1;
             for (int row = rows - 1; row >= 1; row--)
             {
-                if (board.Content[row, col] != null)
+                if (board.Content[row, col] != "🚫")
                 {
                     board.Content[writeRow, col] = board.Content[row, col];
                     if (writeRow != row)

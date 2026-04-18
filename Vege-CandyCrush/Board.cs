@@ -9,8 +9,9 @@ public class Board
         Content = new string[height, width];
     }
     
-    public void PrintBoard() 
+    public void PrintBoard(string message)
     {
+        Console.WriteLine(message + "\n");
         for (int j = 0; j < Content.GetLength(0); j++)
         {
             for (int i = 0; i < Content.GetLength(1); i++)
@@ -20,6 +21,8 @@ public class Board
             }
             Console.WriteLine();
         }
+        
+        Console.WriteLine("\n");
     }
     public void ElementSwap()
     {
