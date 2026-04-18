@@ -137,6 +137,7 @@ public class GameManager
         if (count == 3) return ExplosionType.THREE;
         return ExplosionType.NONE;
     } 
+    //TODO: Display 🚫 when elements exploded before showing next board(after swaping)
     public void Explode(List<ExplosionCandidate> candidates)
     {
         foreach (var candidate in candidates)
